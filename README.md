@@ -1,1 +1,1 @@
-# -lassifier-of-mathematical-problems
+# Classifier-of-mathematical-problems
