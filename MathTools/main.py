@@ -38,4 +38,5 @@ if __name__ == "__main__":
     # solve('calk_getMod_n=3;m=3')
     # solve('calk_roundNumber_n=1.123232;comands=2')
     # solve('polynomial_solveTrigonometric_pol=cosh(x)**2+sinh(x)**2')
+    # solve('calk_fact_n=33')
     print('OK')

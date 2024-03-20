@@ -6,11 +6,8 @@ import random
 
 def fact(n):
     n = int(split_params(n))
-    number = 1
-    for i in range(2, n+1):
-        number *= i
-    answer_format = "{n}! = {number}"
-    return answer_format.format(n=n, number=number)
+    answer_format = f"{n}! = {sm.factorial(n)}"
+    return answer_format.format()
 
 
 def fast_pow(x, y):
