@@ -9,7 +9,7 @@
 ```python
 solve('calk_primefactorsNumber_n=20')
 
-#Вывод:
+# Вывод:
 # 2^2 * 5^1
 ```
 ---
