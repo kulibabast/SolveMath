@@ -105,7 +105,7 @@ def get_mod(n, m):
 
 
 def round_number(n, comands):
-    n, comands = float(split_params(n)), split_params(comands)
+    n, comands = float(sm.N(split_params(n))), split_params(comands)
     if comands == 'up':
         return str(ceil(n))
     elif comands == 'down':
@@ -124,16 +124,6 @@ def find_divisors(n):
     divisors = list(map(str, sorted(divisors)))
     return f'Число {n} имеет делители: {", ".join(divisors)}'
 
-def get_mod(n):
-    n = int(split_params(n))
-    divisors = []
-    for i in range(1, int(math.sqrt(n))+1):
-        if n % i == 0:
-            divisors.append(i)
-            if i != n // i:
-                divisors.append(n // i)
-    divisors = list(map(str, sorted(divisors)))
-    return f'Число {n} имеет делители: {", ".join(divisors)}'
 
 
 def get_gcd(n, m):
