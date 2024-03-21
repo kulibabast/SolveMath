@@ -1,5 +1,5 @@
 import sympy as sm
-from GeneralFunctions import split_params
+from MathTools.GeneralFunctions import split_params
 
 
 def C_n_k(n, k):
