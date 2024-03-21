@@ -135,6 +135,12 @@ def get_mod(n):
     divisors = list(map(str, sorted(divisors)))
     return f'Число {n} имеет делители: {", ".join(divisors)}'
 
+
+def get_gcd(n, m):
+    n, m = int(split_params(n)), int(split_params(m))
+    return f'НОД {n} и {m} = {math.gcd(n, m)}'
+
+
 func_dict = {
     'fact': fact,
     'pow': fast_pow,
@@ -143,7 +149,8 @@ func_dict = {
     'checkMod': check_mod,
     'getMod': get_mod,
     'roundNumber': round_number,
-    'findDivisors': find_divisors
+    'findDivisors': find_divisors,
+    'getGcd': get_gcd
 }
 
 

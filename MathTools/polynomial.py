@@ -1,5 +1,6 @@
 import sympy as sm
 from sympy import symbols, sympify, expand, diff, factor, trigsimp, solve
+from sympy import powsimp
 from sympy.polys.polytools import div
 from GeneralFunctions import split_params, split_params_for_equation
 from MathTools.calk import fast_pow
@@ -148,6 +149,27 @@ def solve_equation(equation: str, variable: str):
     return f"Решение уравнения: {equation_input} принадлежит " + '{' + set_solve + '}'
 
 
+def square_of_the_sum(equation: str):
+    equation = split_params(equation)
+    a, b, n = equation.replace('(', "")\
+                      .replace('+', " ")\
+                      .replace(')^', " ")\
+                      .split()
+    equation_answer = f"({a})^2 + 2*{a} + ({b})^2"
+    answer = f'{equation} = {equation_answer}'
+    return answer
+
+
+def square_of_the_dif(equation: str):
+    equation = split_params(equation)
+    a, b, n = equation.replace('(', "")\
+                      .replace('-', " ")\
+                      .replace(')^', " ")\
+                      .split()
+    equation_answer = f"({a})^2 - 2*{a} + ({b})^2"
+    answer = f'{equation} = {equation_answer}'
+    return answer
+
 func_dict = {
     'discriminant': calk_discriminant,
     'binomialTheorem': binomial_theorem,
@@ -158,7 +180,9 @@ func_dict = {
     'simplifyPolynomial': simplify_polynomial,
     'factorPolynomial': factor_polynomial,
     'solveTrigonometric': solve_trigonometric,
-    'solveEquation': solve_equation
+    'solveEquation': solve_equation,
+    'squareSum': square_of_the_sum,
+    'squareDif': square_of_the_dif
 }
 
 
