@@ -1,7 +1,10 @@
 import streamlit as st
+import pandas as pd
 from time import sleep
 from MathTools.main import solve
-
+from MathTools.polynomial import kramer_method
+import re
+import sympy as sm
 
 def gen_solve():
     st.title("Генерация решения")
@@ -40,7 +43,8 @@ def math_tools():
     st.title("Математические инструменты")
     option = st.selectbox(
         'Выберите вариант',
-        ('Формула сочетаний', 'Бином Ньютона', 'Решение линейных уравнений')
+        ('Формула сочетаний', 'Формула размещений',
+         'Бином Ньютона', 'Решение линейных уравнений')
     )
 
     if option == 'Формула сочетаний':
@@ -49,7 +53,25 @@ def math_tools():
         if st.button("Рассчитать", type="primary"):
             if n and k:
                 answer = solve(f'combinatorics_C_n={n};k={k}')
-                st.write(answer)
+                answer = list(map(lambda x: x.replace(' ', ""), re.split(r'[=/]', answer)))
+                answer = answer[0] + ' = ' + '\dfrac{' + answer[1][1:-1] + '}' \
+                        '{' + answer[2][1:-1] + '}' + f' = {answer[3]}'
+                print(answer)
+                st.markdown("### Решение:")
+                st.latex(answer)
+            else:
+                st.error("Пожалуйста, введите параметры")
+    elif option == 'Формула размещений':
+        n = st.number_input('Введите n', min_value=0, step=1)
+        k = st.number_input('Введите k', min_value=0, step=1)
+        if st.button("Рассчитать", type="primary"):
+            if n and k:
+                answer = solve(f'combinatorics_A_n={n};k={k}')
+                answer = list(map(lambda x: x.replace(' ', ""), re.split(r'[=/]', answer)))
+                answer = answer[0] + ' = ' + '\dfrac{' + answer[1][1:-1] + "}" \
+                                    "{" + answer[2][1:-1] + '}' + f' = {answer[3]}'
+                st.markdown("### Решение:")
+                st.latex(answer)
             else:
                 st.error("Пожалуйста, введите параметры")
     elif option == 'Бином Ньютона':
@@ -59,20 +81,24 @@ def math_tools():
         if st.button("Рассчитать", type="primary"):
             if n and b and n:
                 answer = solve(f'polynomial_binomialTheorem_equation=({a}+{b})^{n}')
-                st.write(answer)
+                st.markdown("### Решение:")
+                st.latex(answer)
             else:
                 st.error("Пожалуйста, введите параметры")
 
     elif option == 'Решение линейных уравнений':
-        a = st.number_input('Введите a', min_value=0, step=1)
-        b = st.number_input('Введите b', min_value=0, step=1)
-        n = st.number_input('Введите n', min_value=0, step=1)
-        if st.button("Рассчитать", type="primary"):
-            if n and b and n:
-                answer = solve(f'polynomial_binomialTheorem_equation=({a}+{b})^{n}')
-                st.write(answer)
-            else:
-                st.error("Пожалуйста, введите параметры")
+        n = st.number_input('Введите количество переменных', min_value=0, max_value=9, step=1)
+        if n:
+            df = pd.DataFrame([{f'k_{num}': 0 for num in range(1, n+1)} for _ in range(n)])
+            df['y'] = 0
+            edited_df = st.data_editor(df)
+            if st.button("Рассчитать", type="primary"):
+                X = edited_df[[column for column in edited_df.columns if column != 'y']].values
+                Y = edited_df['y'].values
+                answer = kramer_method(sm.Matrix(X), sm.Matrix(Y))
+                st.markdown("### Решение:")
+                st.write(answer.replace('\n', '\n\n'))
+
 
 def main():
     st.sidebar.title("Разделы")
