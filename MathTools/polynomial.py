@@ -1,6 +1,6 @@
 import sympy as sm
 from sympy import symbols, sympify, expand, diff, factor, trigsimp, solve
-from sympy import powsimp
+from sympy import simplify
 from sympy.polys.polytools import div
 from GeneralFunctions import split_params, split_params_for_equation
 from MathTools.calk import fast_pow
@@ -16,9 +16,9 @@ def get_params(equation: str, variable: str):
 
 def calk_discriminant(equation: str, variable: str):
     a, b, c = get_params(equation, variable)
-    discriminant = b * b - 4 * a * c
+    discriminant = simplify(f'{b} * {b} - 4 * {a} * {c}')
     answer = "D = {b}^2 - 4{a}*{c} = {discriminant}"
-    return answer.format(a=a, b=b, discriminant=discriminant)
+    return answer.format(a=a, b=b, c=c, discriminant=discriminant)
 
 
 def binomial_theorem(equation: str):

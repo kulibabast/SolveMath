@@ -44,7 +44,9 @@ def math_tools():
     option = st.selectbox(
         'Выберите вариант',
         ('Формула сочетаний', 'Формула размещений',
-         'Бином Ньютона', 'Решение линейных уравнений')
+         'Бином Ньютона', 'Решение линейных уравнений',
+         "Подсчет дискриминанта", "Узнать координаты вершины",
+         "Вычисление производной")
     )
 
     if option == 'Формула сочетаний':
@@ -98,6 +100,38 @@ def math_tools():
                 answer = kramer_method(sm.Matrix(X), sm.Matrix(Y))
                 st.markdown("### Решение:")
                 st.write(answer.replace('\n', '\n\n'))
+    elif option == 'Подсчет дискриминанта':
+        df = pd.DataFrame([{'a': 0, "b": 0, 'c': 0}])
+        edited_df = st.data_editor(df)
+        if st.button("Рассчитать", type="primary"):
+            a, b, c = edited_df['a'][0], edited_df['b'][0], edited_df['c'][0]
+            answer = solve(f'polynomial_discriminant_equation={a}*x^2+({b})*x+({c});variable=x')
+            st.markdown("### Решение:")
+            st.latex(answer)
+    elif option == 'Узнать координаты вершины':
+        df = pd.DataFrame([{'a': 0, "b": 0, 'c': 0}])
+        edited_df = st.data_editor(df)
+        if st.button("Рассчитать", type="primary"):
+            a, b, c = edited_df['a'][0], edited_df['b'][0], edited_df['c'][0]
+            equation = f'{a}*x^2+({b})*x+({c})'
+            answer_x, answer_y = solve(f'polynomial_vertexOfParabola_equation={equation};variable=x')
+            st.markdown("### Решение:")
+            st.latex(equation)
+            st.latex(answer_x)
+            st.latex(answer_y)
+    elif option == "Вычисление производной":
+        pol = st.text_input("Введите уравнение:")
+        variable = st.text_input("По какой переменной продифференцировать:")
+        st.write("Ваше уравнение выглядит так: ")
+        st.latex(pol)
+        st.write("Переменная: ")
+        st.latex(variable)
+        if st.button("Рассчитать", type="primary"):
+
+            answer = solve(f'polynomial_differentiate_pol={pol};variable={variable}').split()
+            st.markdown("### Решение:")
+            answer = '\dfrac{' + answer[1] + '}' + '{d' + variable + '}' " = " +  answer[-1]
+            st.latex(answer)
 
 
 def main():
