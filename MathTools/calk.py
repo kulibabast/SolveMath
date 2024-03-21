@@ -2,6 +2,7 @@ from GeneralFunctions import split_params
 import sympy as sm
 from math import gcd, ceil
 import random
+import math
 
 
 def fact(n):
@@ -112,6 +113,27 @@ def round_number(n, comands):
     else:
         return str(round(n, int(comands)))
 
+def find_divisors(n):
+    n = int(split_params(n))
+    divisors = []
+    for i in range(1, int(math.sqrt(n))+1):
+        if n % i == 0:
+            divisors.append(i)
+            if i != n // i:
+                divisors.append(n // i)
+    divisors = list(map(str, sorted(divisors)))
+    return f'Число {n} имеет делители: {", ".join(divisors)}'
+
+def get_mod(n):
+    n = int(split_params(n))
+    divisors = []
+    for i in range(1, int(math.sqrt(n))+1):
+        if n % i == 0:
+            divisors.append(i)
+            if i != n // i:
+                divisors.append(n // i)
+    divisors = list(map(str, sorted(divisors)))
+    return f'Число {n} имеет делители: {", ".join(divisors)}'
 
 func_dict = {
     'fact': fact,
@@ -120,7 +142,8 @@ func_dict = {
     'primefactorsNumber': prime_factorization,
     'checkMod': check_mod,
     'getMod': get_mod,
-    'roundNumber': round_number
+    'roundNumber': round_number,
+    'findDivisors': find_divisors
 }
 
 

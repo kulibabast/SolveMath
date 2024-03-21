@@ -1,7 +1,7 @@
 import sympy as sm
-from sympy import symbols, sympify, expand, diff, factor, trigsimp
+from sympy import symbols, sympify, expand, diff, factor, trigsimp, solve
 from sympy.polys.polytools import div
-from GeneralFunctions import split_params
+from GeneralFunctions import split_params, split_params_for_equation
 from MathTools.calk import fast_pow
 import re
 
@@ -136,6 +136,17 @@ def solve_trigonometric(pol: str):
     return str(trigsimp(split_params(pol))).replace("**", '^')
 
 
+def solve_equation(equation: str, variable: str):
+    equation_input, variable = split_params_for_equation(equation), split_params(variable)
+    variable = symbols(variable)
+    left_expression, right_expression = equation_input.split('=')
+    left_side = sympify(left_expression)
+    right_side = sympify(right_expression)
+    equation = left_side - right_side
+    solution = solve(equation, variable)
+    set_solve = ';'.join(map(str, solution))
+    return f"Решение уравнения: {equation_input} принадлежит " + '{' + set_solve + '}'
+
 
 func_dict = {
     'discriminant': calk_discriminant,
@@ -146,7 +157,8 @@ func_dict = {
     'differentiate': differentiate,
     'simplifyPolynomial': simplify_polynomial,
     'factorPolynomial': factor_polynomial,
-    'solveTrigonometric': solve_trigonometric
+    'solveTrigonometric': solve_trigonometric,
+    'solveEquation': solve_equation
 }
 
 
