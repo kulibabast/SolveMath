@@ -1,5 +1,8 @@
 from transformers import GPT2LMHeadModel, GPT2Tokenizer
-model = GPT2LMHeadModel.from_pretrained(r"C:\Users\kulib\PycharmProjects\SolveMath\Site\Layout\MlService\finetuned-rugpt")
+import os
+
+model_path = os.environ.get('MODEL_PATH')
+model = GPT2LMHeadModel.from_pretrained(model_path)
 tokenizer = GPT2Tokenizer.from_pretrained("sberbank-ai/rugpt3small_based_on_gpt2")
 
 
