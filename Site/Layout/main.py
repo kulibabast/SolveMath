@@ -5,6 +5,8 @@ from MathTools.main import solve
 from MathTools.polynomial import kramer_method
 import re
 import sympy as sm
+from MlService.main import generate_response
+
 
 def gen_solve():
     st.title("Генерация решения")
@@ -13,8 +15,8 @@ def gen_solve():
         messages = st.container()
         messages.chat_message("user", avatar="👽").write(prompt)
         messages.chat_message("bot", avatar="🤖").write(f"Получил! В процессе решения...")
-        sleep(0.5)
-        messages.chat_message("bot", avatar="🤖").write(f"Готово!")
+        answer = generate_response(prompt)
+        messages.chat_message("bot", avatar="🤖").write(answer)
 
 
 def topic_class():
@@ -23,7 +25,7 @@ def topic_class():
 
     if st.button("Нажмите для обработки", type="primary"):
         if user_input:
-            # answer = get_ml(user_input)
+            # answer =
             st.write("Это дирихле")
         else:
             st.error("Пожалуйста, введите условие")
