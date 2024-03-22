@@ -23,6 +23,7 @@ def topic_class():
 
     if st.button("Нажмите для обработки", type="primary"):
         if user_input:
+            # answer = get_ml(user_input)
             st.write("Это дирихле")
         else:
             st.error("Пожалуйста, введите условие")
@@ -34,6 +35,7 @@ def prediction_theory():
 
     if st.button("Нажмите для обработки", type="primary"):
         if user_input:
+            # answer = get_ml(user_input)
             st.write("Возможно, это Оценка+Пример")
         else:
             st.error("Пожалуйста, введите условие")
@@ -46,7 +48,9 @@ def math_tools():
         ('Формула сочетаний', 'Формула размещений',
          'Бином Ньютона', 'Решение линейных уравнений',
          "Подсчет дискриминанта", "Узнать координаты вершины",
-         "Вычисление производной")
+         "Вычисление производной", 'Факторизация числа',
+         "Вычислить выражение", "Вычислить делители числа",
+         "Решить уравнение")
     )
 
     if option == 'Формула сочетаний':
@@ -101,24 +105,30 @@ def math_tools():
                 st.markdown("### Решение:")
                 st.write(answer.replace('\n', '\n\n'))
     elif option == 'Подсчет дискриминанта':
-        df = pd.DataFrame([{'a': 0, "b": 0, 'c': 0}])
+        df = pd.DataFrame([{'a': 1, "b": 0, 'c': 0}])
         edited_df = st.data_editor(df)
         if st.button("Рассчитать", type="primary"):
             a, b, c = edited_df['a'][0], edited_df['b'][0], edited_df['c'][0]
-            answer = solve(f'polynomial_discriminant_equation={a}*x^2+({b})*x+({c});variable=x')
-            st.markdown("### Решение:")
-            st.latex(answer)
+            if a != 0:
+                answer = solve(f'polynomial_discriminant_equation={a}*x^2+({b})*x+({c});variable=x')
+                st.markdown("### Решение:")
+                st.latex(answer)
+            else:
+                st.error('очень вкусно и точка')
     elif option == 'Узнать координаты вершины':
         df = pd.DataFrame([{'a': 0, "b": 0, 'c': 0}])
         edited_df = st.data_editor(df)
         if st.button("Рассчитать", type="primary"):
             a, b, c = edited_df['a'][0], edited_df['b'][0], edited_df['c'][0]
-            equation = f'{a}*x^2+({b})*x+({c})'
-            answer_x, answer_y = solve(f'polynomial_vertexOfParabola_equation={equation};variable=x')
-            st.markdown("### Решение:")
-            st.latex(equation)
-            st.latex(answer_x)
-            st.latex(answer_y)
+            if a != 0:
+                equation = f'{a}*x^2+({b})*x+({c})'
+                answer_x, answer_y = solve(f'polynomial_vertexOfParabola_equation={equation};variable=x')
+                st.markdown("### Решение:")
+                st.latex(equation)
+                st.latex(answer_x)
+                st.latex(answer_y)
+            else:
+                st.error('очень вкусно и нет точки')
     elif option == "Вычисление производной":
         pol = st.text_input("Введите уравнение:")
         variable = st.text_input("По какой переменной продифференцировать:")
@@ -126,12 +136,47 @@ def math_tools():
         st.latex(pol)
         st.write("Переменная: ")
         st.latex(variable)
-        if st.button("Рассчитать", type="primary"):
 
-            answer = solve(f'polynomial_differentiate_pol={pol};variable={variable}').split()
+        if st.button("Рассчитать", type="primary"):
+            answer = solve(f'polynomial_differentiate_pol={pol};variable={variable}')
+            print(answer)
             st.markdown("### Решение:")
-            answer = '\dfrac{' + answer[1] + '}' + '{d' + variable + '}' " = " +  answer[-1]
+            answer = '\dfrac{' + pol + '}' + '{d' + variable + '}' " = " + answer
             st.latex(answer)
+    elif option == "Вычислить выражение":
+        quotient = st.text_input("Введите выражение:")
+        st.write("Ваше уравнение выглядит так: ")
+        st.latex(quotient)
+
+        if st.button("Рассчитать", type="primary"):
+            answer = solve(f'calk_evalWithNumber_quotient={quotient}')
+            st.markdown("### Ответ:")
+            st.latex(answer)
+    elif option == "Факторизация числа":
+        n = st.number_input('Введите число', min_value=1, step=1)
+        if st.button("Рассчитать", type="primary"):
+            answer = solve(f'calk_primefactorsNumber_n={n}')
+            st.latex(f'{n} = ' + answer)
+    elif option == "Вычислить делители числа":
+        n = st.number_input('Введите число', min_value=1, step=1)
+        if st.button("Рассчитать", type="primary"):
+            answer = solve(f'calk_findDivisors_n={n}')
+            st.write(answer)
+    elif option == "Решить уравнение":
+        equation = st.text_input("Введите уравнение:")
+        variable = st.text_input("По какой переменной решить:")
+        st.write("Ваше уравнение выглядит так: ")
+        st.latex(equation)
+        st.write("Переменная: ")
+        st.latex(variable)
+
+        if st.button("Рассчитать", type="primary"):
+            answer = solve(f'polynomial_solveEquation_equation={equation};variable={variable}')
+            answer = answer.split(';')
+            st.markdown("### Уравнение имеет следующие корни:")
+            for ind, value in enumerate(answer):
+                st.latex(value)
+
 
 
 def main():

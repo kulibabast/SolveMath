@@ -2,12 +2,7 @@ from MathTools.GeneralFunctions import split_params
 import sympy as sm
 from math import gcd, ceil
 import random
-
-
-def fact(n):
-    n = int(split_params(n))
-    answer_format = f"{n}! = {sm.factorial(n)}"
-    return answer_format.format()
+import math
 
 
 def fast_pow(x, y):
@@ -45,82 +40,46 @@ def is_prime(x):
     return True
 
 
-def brent_factorization(n):
-    if n % 2 == 0:
-        return [2] + brent_factorization(n // 2)
-
-    if is_prime(n):
-        return [n]
-
-    y, c, m = random.randint(1, n - 1), random.randint(1, n - 1), random.randint(1, n - 1)
-    g, r, q = 1, 1, 1
-    while g == 1:
-        x = y
-        for i in range(r):
-            y = (y * y + c) % n
-        k = 0
-        while k < r and g == 1:
-            ys = y
-            for i in range(min(m, r - k)):
-                y = (y * y + c) % n
-                q = q * (abs(x - y)) % n
-            g = gcd(q, n)
-            k += m
-        r *= 2
-    if g == n:
-        while True:
-            ys = (ys * ys + c) % n
-            g = gcd(abs(x - ys), n)
-            if g > 1:
-                break
-
-    if is_prime(g):
-        return [g] + brent_factorization(n // g)
-    else:
-        return brent_factorization(g) + brent_factorization(n // g)
-
-
-def prime_factorization(n: str):
+def factorize_number(n):
     n = int(split_params(n))
-    factors = {}
-    for factor in brent_factorization(n):
-        factors[factor] = factors.get(factor, 0) + 1
-    answer = ''
-    for key in factors:
-        answer += f'{key}^{factors[key]} * '
-    return answer[:-3]
+    factors = []
+    divisor = 2
+
+    while n > 1:
+        if n % divisor == 0:
+            count = 0
+            while n % divisor == 0:
+                n //= divisor
+                count += 1
+            factors.append((divisor, count))
+        divisor += 1
+
+    return format_factors(factors)
 
 
-def check_mod(n, m):
-    n, m = int(split_params(n)), int(split_params(m))
-    if n % m == 0:
-        return f'{n} делится нацело на {m} ({n} / {m} = {n // m})'
-    return f'{n} не делится нацело на {m} ({n} по модулю {m} = {n % m})'
+def format_factors(factors):
+    formatted_factors = []
+    for factor, count in factors:
+        formatted_factors.append(f"{factor}^{count}")
+    return " * ".join(formatted_factors)
 
 
-def get_mod(n, m):
-    n, m = int(split_params(n)), int(split_params(m))
-    return f'{n} по модулю {m} = {n % m}'
-
-
-def round_number(n, comands):
-    n, comands = float(split_params(n)), split_params(comands)
-    if comands == 'up':
-        return str(ceil(n))
-    elif comands == 'down':
-        return str(int(n))
-    else:
-        return str(round(n, int(comands)))
+def find_divisors(n):
+    n = int(split_params(n))
+    divisors = []
+    for i in range(1, int(math.sqrt(n))+1):
+        if n % i == 0:
+            divisors.append(i)
+            if i != n // i:
+                divisors.append(n // i)
+    divisors = list(map(str, sorted(divisors)))
+    return f'Число {n} имеет делители: {", ".join(divisors)}'
 
 
 func_dict = {
-    'fact': fact,
-    'pow': fast_pow,
     'evalWithNumber': eval_quotient_with_number,
-    'primefactorsNumber': prime_factorization,
-    'checkMod': check_mod,
-    'getMod': get_mod,
-    'roundNumber': round_number
+    'primefactorsNumber': factorize_number,
+    'findDivisors': find_divisors,
 }
 
 

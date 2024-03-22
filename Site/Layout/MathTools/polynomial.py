@@ -1,7 +1,6 @@
 import sympy as sm
-from sympy import symbols, sympify, expand, diff, factor, trigsimp, simplify
-from sympy.polys.polytools import div
-from MathTools.GeneralFunctions import split_params
+from sympy import symbols, sympify, diff, simplify, solve
+from MathTools.GeneralFunctions import split_params, split_params_for_equation
 from MathTools.calk import fast_pow
 import re
 
@@ -87,48 +86,23 @@ def solve_linear_equations(equation: str):
     return result
 
 
-def transformation_polynomials(pol1: str, pol2: str, action: str):
-    pol1, pol2, action = split_params(pol1), split_params(pol2), \
-                                split_params(action)
-    pol_1 = sympify(pol1)
-    pol_2 = sympify(pol2)
-
-    if action == 'div':
-        quotient, remainder = div(pol_1, pol_2)
-        answer_format = f'{pol_1} / {pol_2}:\nчастное: {quotient}\nостаток: {remainder}'
-    elif action == 'sum':
-        result = pol_1 + pol_2
-        answer_format = f'{pol_1} + {pol_2} = {result}'
-    elif action == 'dif':
-        result = pol_1 - pol_2
-        answer_format = f'{pol_1} - {pol_2} = {result}'
-    elif action == 'expand':
-        result = expand(pol_1 * pol_2)
-        answer_format = f'{pol_1} * {pol_2} = {result}'
-    else:
-        raise ValueError(f'{action} not found')
-    return answer_format.replace("**", '^')
-
-
 def differentiate(pol: str, variable: str):
     pol = sympify(split_params(pol))
     variable = symbols(split_params(variable))
     f_prime = diff(pol, variable)
-    answer_format = f'Производная {pol} по переменной {variable} = {f_prime}'
-    return answer_format.replace("**", '^')
+    return str(f_prime).replace("**", '^')
 
 
-def simplify_polynomial(pol: str):
-    return str(sympify(split_params(pol))).replace("**", '^')
-
-
-def factor_polynomial(pol: str):
-    return str(factor(split_params(pol))).replace("**", '^')
-
-
-def solve_trigonometric(pol: str):
-    return str(trigsimp(split_params(pol))).replace("**", '^')
-
+def solve_equation(equation: str, variable: str):
+    equation_input, variable = split_params_for_equation(equation), split_params(variable)
+    variable = symbols(variable)
+    left_expression, right_expression = equation_input.split('=')
+    left_side = sympify(left_expression)
+    right_side = sympify(right_expression)
+    equation = left_side - right_side
+    solution = solve(equation, variable)
+    set_solve = ';'.join(map(str, solution))
+    return set_solve
 
 
 func_dict = {
@@ -136,11 +110,8 @@ func_dict = {
     'binomialTheorem': binomial_theorem,
     'vertexOfParabola': vertex_of_parabola,
     'solveLinearEquations': solve_linear_equations,
-    'transformationPolynomials': transformation_polynomials,
     'differentiate': differentiate,
-    'simplifyPolynomial': simplify_polynomial,
-    'factorPolynomial': factor_polynomial,
-    'solveTrigonometric': solve_trigonometric
+    'solveEquation': solve_equation,
 }
 
 
