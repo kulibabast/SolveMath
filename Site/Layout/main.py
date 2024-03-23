@@ -1,11 +1,19 @@
 import streamlit as st
 import pandas as pd
-from time import sleep
 from MathTools.main import solve
 from MathTools.polynomial import kramer_method
 import re
 import sympy as sm
-from MlService.main import generate_response
+from MlService.main import generate_response, get_predictions_theory, \
+                            get_predictions_topic
+import plotly.graph_objs as go
+
+
+
+NAME_TOPIC = ['Геометрия', 'Дирихле',
+              'Инвариант', 'Многочлен',
+              'Комбинаторика', 'Оценка+Пример',
+              'Теория чисел', 'Графы']
 
 
 def gen_solve():
@@ -22,23 +30,51 @@ def gen_solve():
 def topic_class():
     st.title("Классификация темы")
     user_input = st.text_input("Введите условие:")
+    ver = st.number_input('Введите минимальную вероятность уверенности',
+                          min_value=0, max_value=99, step=1)
 
     if st.button("Нажмите для обработки", type="primary"):
         if user_input:
-            # answer =
-            st.write("Это дирихле")
+            answer, prob = get_predictions_topic(user_input)
+            st.markdown(f"### Наиболее вероятные темы:")
+            for name in answer:
+                if int(answer[name]) <= ver:
+                    break
+                st.write(f'{name} - {answer[name]}%')
+
+            fig = go.Figure(data=[go.Pie(labels=NAME_TOPIC, values=prob)])
+            fig.update_layout(width=800, height=600,
+                              margin=dict(
+                                  l=0.5,  # Отступ слева
+                                  r=0,  # Отступ справа
+                                  t=0,  # Отступ сверху
+                                  b=0.3,  # Отступ снизу
+                              ),
+                              legend=dict(orientation="h",
+                                          xanchor="center",
+                                          yanchor="top",
+                                          x=0.4,
+                                          y=-0.3,
+                                          font=dict(size=18, )
+                                          ))
+            st.plotly_chart(fig)
         else:
-            st.error("Пожалуйста, введите условие")
+            st.error("Пожалуйста, введите условие ")
 
 
 def prediction_theory():
     st.title("Предположение теории")
     user_input = st.text_input("Введите условие:")
-
+    ver = st.number_input('Введите минимальную вероятность уверенности',
+                          min_value=0, max_value=99, step=1)
     if st.button("Нажмите для обработки", type="primary"):
         if user_input:
-            # answer = get_ml(user_input)
-            st.write("Возможно, это Оценка+Пример")
+            answer = get_predictions_theory(user_input)
+            st.markdown(f"### Наиболее вероятные темы:")
+            for name in answer:
+                if int(answer[name]) <= ver:
+                    break
+                st.write(f'{name} - {answer[name]}%')
         else:
             st.error("Пожалуйста, введите условие")
 
